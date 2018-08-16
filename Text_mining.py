@@ -9,8 +9,8 @@ import warnings
 warnings.filterwarnings("ignore", category=DeprecationWarning)
 
 %matplotlib inline
-train  = pd.read_csv('train_E6oV3lV.csv')
-test = pd.read_csv('test_tweets_anuFYb8.csv')
+train  = pd.read_csv('train_data.csv')
+test = pd.read_csv('test_tweets.csv')
 train.head()
 
 combi = train.append(test, ignore_index=True)
@@ -138,3 +138,16 @@ f1_score(yvalid, prediction_int) #calculating f1 score
 
 # Building model using TF-IDF features
 
+train_tfidf = tfidf[:31962,:]
+test_tfidf = tfidf[31962:,:]
+
+xtrain_tfidf = train_tfidf[ytrain.index]
+xvalid_tfidf = train_tfidf[yvalid.index]
+
+lreg.fit(xtrain_tfidf, ytrain)
+
+prediction = lreg.predict_proba(xvalid_tfidf)
+prediction_int = prediction[:,1] >= 0.3
+prediction_int = prediction_int.astype(np.int)
+
+f1_score(yvalid, prediction_int)
